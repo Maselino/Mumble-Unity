@@ -305,7 +305,7 @@ namespace Mumble
                         Debug.LogError("IO Exception: " + ex);
                         _mumbleClient.OnConnectionDisconnect();
                     }
-                   //These just means the app stopped, it's ok
+                    //These just means the app stopped, it's ok
                     else if (ex is ObjectDisposedException) { }
                     else if (ex is ThreadAbortException) { }
                     else
@@ -316,6 +316,28 @@ namespace Mumble
             // This probably isn't needed but just putting this here to ensure we're always set up for
             // the next thread
             _running = true;
+            CloseConnectionCallback();
+        }
+
+        private void CloseConnectionCallback()
+        {
+            if (_ssl != null)
+                _ssl.Close();
+            _ssl = null;
+            if (_tcpTimer != null)
+                _tcpTimer.Close();
+            _tcpTimer = null;
+            if (_processThread != null)
+                _processThread.Interrupt();
+            _processThread = null;
+            if (_reader != null)
+                _reader.Close();
+            _reader = null;
+            if (_writer != null)
+                _writer.Close();
+            _writer = null;
+            if (_tcpClient != null)
+                _tcpClient.Close();
         }
 
         private void ProcessCryptSetup(CryptSetup cryptSetup)
@@ -341,25 +363,8 @@ namespace Mumble
         internal void Close()
         {
             // Signal thread that it's time to shut down
-            _running = false;
-
-            if(_ssl != null)
-                _ssl.Close();
-            _ssl = null;
-            if(_tcpTimer != null)
-                _tcpTimer.Close();
-            _tcpTimer = null;
-            if(_processThread != null)
-                _processThread.Interrupt();
-            _processThread = null;
-            if(_reader != null)
-                _reader.Close();
-            _reader = null;
-            if(_writer != null)
-                _writer.Close();
-            _writer = null;
-            if(_tcpClient != null)
-                _tcpClient.Close();
+            // Thread should then shutdown on it's own
+            _running = false;            
         }
 
         internal void SendPing(object sender, ElapsedEventArgs elapsedEventArgs)

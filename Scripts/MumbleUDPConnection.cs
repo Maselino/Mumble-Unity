@@ -118,6 +118,7 @@ namespace Mumble
                 {
                     if (ex is ObjectDisposedException) { return; }
                     else if (ex is ThreadAbortException) { return; }
+                    else if (ex is ThreadInterruptedException) { return; }
                     else
                         Debug.LogError("Unhandled UDP receive error: " + ex);
                 }
@@ -125,7 +126,9 @@ namespace Mumble
             // This probably isn't needed but go ahead and set running back to true
             // here just to ensure we're always set up for the next thread
             _running = true;
+            CloseConnectionCallback();
         }
+
         internal bool ProcessUdpMessage(byte[] encrypted, int len)
         {
             //Debug.Log("encrypted length: " + len);
@@ -250,15 +253,22 @@ namespace Mumble
         internal void Close()
         {
             // Signal thread that it's time to shut down
-            _running = false;
-            if (_receiveThread != null)
-                _receiveThread.Interrupt();
-            _receiveThread = null;
-            if(_udpTimer != null)
+            // Thread should shutdown on its own
+            _running = false;            
+            SendPing();
+        }
+
+        internal void CloseConnectionCallback()
+        {
+            if (_udpTimer != null)
                 _udpTimer.Close();
             _udpTimer = null;
-            _udpClient.Close();
+            if (_receiveThread != null)
+                _receiveThread.Interrupt();
+            _receiveThread = null;            
+            _udpClient.Close(); 
         }
+
         internal void SendVoicePacket(byte[] voicePacket)
         {
             if (!_isConnected)
