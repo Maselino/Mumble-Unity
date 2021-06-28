@@ -680,6 +680,30 @@ namespace Mumble
             return true;
         }
 
+        public bool LeaveChannel(string channelToleave)
+        {
+            if (OurUserState == null)
+                return false;
+            if (!ConnectionSetupFinished)
+                return false;
+            String currentChannel = GetCurrentChannel();
+            if (!currentChannel.Equals(channelToleave)) return false;
+
+            Channel root = Channels[0];
+            UserState state = new UserState
+            {
+                ChannelId = root.ChannelId,
+                Actor = OurUserState.Session,
+                Session = OurUserState.Session,
+                SelfMute = (_pendingMute != null) ? _pendingMute.Value : OurUserState.SelfMute
+            };
+            _pendingMute = null;
+
+            Debug.Log("Attempting to join channel Id: " + state.ChannelId);
+            _tcpConnection.SendMessage<MumbleProto.UserState>(MessageType.UserState, state);
+            return true;
+        }
+
         /// <summary>
         /// Returns the dictionary of all user states
         /// NOTE: This is NOT a copy, so do not edit the returned dictionary
