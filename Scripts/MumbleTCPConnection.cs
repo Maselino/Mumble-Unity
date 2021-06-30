@@ -31,6 +31,7 @@ namespace Mumble
         private Thread _processThread;
         private string _username;
         private string _password;
+        private System.Collections.Generic.List<string> _tokens;
 
         internal MumbleTcpConnection(IPEndPoint host, string hostname, UpdateOcbServerNonce updateOcbServerNonce,
             MumbleUdpConnection udpConnection, MumbleClient mumbleClient)
@@ -50,10 +51,12 @@ namespace Mumble
             };
         }
 
-        internal void StartClient(string username, string password)
+        internal void StartClient(string username, string password, string tokens)
         {
             _username = username;
             _password = password;
+            _tokens = new System.Collections.Generic.List<string>();
+            _tokens.Add(tokens);
             _tcpClient.BeginConnect(_host.Address, _host.Port, new AsyncCallback(OnTcpConnected), null);
             //Debug.Log("Attempting to connect to " + _host);
         }
@@ -172,6 +175,7 @@ namespace Mumble
                             {
                                 Username = _username,
                                 Password = _password,
+                                Tokens =_tokens,
                                 Opus = true
                             };
                             SendMessage(MessageType.Authenticate, authenticate);

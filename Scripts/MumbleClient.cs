@@ -448,14 +448,14 @@ namespace Mumble
             // Try to remove the audio player and decoding buffer if it exists
             TryRemoveDecodingBuffer(removedUserSession);
         }
-        public void Connect(string username, string password)
+        public void Connect(string username, string password, string token)
         {
             if (!ReadyToConnect)
             {
                 Debug.LogError("We're not ready to connect yet!");
                 return;
             }
-            _tcpConnection.StartClient(username, password);
+            _tcpConnection.StartClient(username, password, token);
         }
         internal void ConnectUdp()
         {

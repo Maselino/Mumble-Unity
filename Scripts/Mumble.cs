@@ -169,7 +169,7 @@ namespace MumbleProto
         private string __pbn__Password;
 
         [global::ProtoBuf.ProtoMember(3, Name = @"tokens")]
-        public global::System.Collections.Generic.List<string> Tokens { get; private set; }
+        public global::System.Collections.Generic.List<string> Tokens { get; set; }
 
         [global::ProtoBuf.ProtoMember(4, Name = @"celt_versions")]
         public int[] CeltVersions { get; set; }

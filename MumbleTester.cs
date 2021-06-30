@@ -54,7 +54,7 @@ public class MumbleTester : MonoBehaviour {
             StartCoroutine(ConnectAsync());
         else
         {
-            _mumbleClient.Connect(Username, Password);
+            _mumbleClient.Connect(Username, Password, "");
             if(MyMumbleMic != null)
             {
                 _mumbleClient.AddMumbleMic(MyMumbleMic);
@@ -99,7 +99,7 @@ public class MumbleTester : MonoBehaviour {
         while (!_mumbleClient.ReadyToConnect)
             yield return null;
         Debug.Log("Will now connect");
-        _mumbleClient.Connect(Username, Password);
+        _mumbleClient.Connect(Username, Password, "");
         yield return null;
         if(MyMumbleMic != null)
         {
