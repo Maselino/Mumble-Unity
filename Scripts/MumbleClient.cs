@@ -675,7 +675,7 @@ namespace Mumble
             };
             _pendingMute = null;
 
-            Debug.Log("Attempting to join channel Id: " + state.ChannelId);
+            //Debug.Log("Attempting to join channel Id: " + state.ChannelId);
             _tcpConnection.SendMessage<MumbleProto.UserState>(MessageType.UserState, state);
             return true;
         }
@@ -699,7 +699,7 @@ namespace Mumble
             };
             _pendingMute = null;
 
-            Debug.Log("Attempting to join channel Id: " + state.ChannelId);
+            //Debug.Log("Attempting to join channel Id: " + state.ChannelId);
             _tcpConnection.SendMessage<MumbleProto.UserState>(MessageType.UserState, state);
             return true;
         }
